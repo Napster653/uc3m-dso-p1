@@ -9,7 +9,7 @@
 void fun1 (int global_index)
 {
 	int a=0, b=0;
-	read_network();
+	read_network ();
 	for (a=0; a<10; ++a)
 	{
 		// printf ("Thread %d with priority %d\t from fun2 a = %d\tb = %d\n", mythread_gettid(), mythread_getpriority(), a, b);
