@@ -30,8 +30,9 @@ struct queue *thread_q;
 
 /* Thread control block for the idle thread */
 static TCB idle;
-static void idle_function (){
-  while (1);
+static void idle_function ()
+{
+	while (1);
 }
 
 /* Initialize the thread library */
