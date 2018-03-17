@@ -190,7 +190,11 @@ TCB* scheduler ()
 		/*Volvemos a introducirlo la rodaja y lo metemos de nuevo a la cola*/
 		running->ticks=QUANTUM_TICKS;
 		disable_interrupt(); //Con disable_interrupt y enable_interrupt protegemos los accesos a la cola
-		enqueue (thread_q , running );
+		if(enqueue (thread_q , running )== NULL)
+		{
+		perror("Fallo al introducir hilo de la cola");
+		exit(-1);
+		}
 		enable_interrupt();
 	}
 	/*Sacamos el siguiente hilo de la cola*/
