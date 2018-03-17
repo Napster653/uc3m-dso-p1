@@ -217,6 +217,3 @@ void activator (TCB* next)
 		swapcontext (&last->run_env,&running->run_env);
 	}
 }
-
-
-
