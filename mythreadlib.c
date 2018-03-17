@@ -25,7 +25,7 @@ static int current = 0;
 /* Variable indicating if the library is initialized (init == 1) or not (init == 0) */
 static int init=0;
 
-/* Queue creation */
+/* Creación de cola */
 struct queue *thread_q;
 
 /* Thread control block for the idle thread */
@@ -69,11 +69,11 @@ void init_mythreadlib() {
  
   t_state[0].tid = 0;
   running = &t_state[0];
-
+  /*inicializamos la cola*/
+  thread_q= queue_new () ;
   /* Initialize network and clock interrupts */
   init_network_interrupt();
   init_interrupt();
-  thread_q= queue_new () ;
 }
 
 
@@ -127,7 +127,6 @@ void mythread_exit() {
   printf("*** THREAD %d FINISHED\n", tid);	
   t_state[tid].state = FREE;
   free(t_state[tid].run_env.uc_stack.ss_sp); 
-
   TCB* next = scheduler();
   activator(next);
 }
@@ -152,9 +151,14 @@ int mythread_gettid(){
 }
 
 
-/* FIFO para alta prioridad, RR para baja*/
+/* Round Robin*/
 TCB* scheduler(){
-  
+  if(running->state != FREE)
+  {
+  running->ticks=QUANTUM_TICKS;
+  enqueue (thread_q , running );
+  }
+  return dequeue(thread_q);
 }
 
 
@@ -162,18 +166,26 @@ TCB* scheduler(){
 void timer_interrupt(int sig)
 {
   /*A cada interrupción del reloj bajamos el número de ticks del hilo actual */
-  running.ticks-=1;
-  if(running.ticks == 0)
+  running->ticks-=1;
+  if(running->ticks == 0)
   {
-     activator(scheduler()); 
+     TCB* next = scheduler();
+     activator(next);
   }
   
 } 
 
 /* Activator */
 void activator(TCB* next){
-  setcontext (&(next->run_env));
-  printf("mythread_free: After setcontext, should never get here!!...\n");	
+  TCB* last = running;
+  running = next;
+  if(running != NULL)
+  {
+  current = running->tid;
+  running->state=INIT;
+  printf("*** SWAPCONTEXT FROM %d TO %d\n",last->tid,running->tid);
+  swapcontext(&last->run_env,&running->run_env);
+  }
 }
 
 
