@@ -188,24 +188,24 @@ TCB* scheduler ()
 	if (running->state != FREE)
 	{
 		/*Volvemos a introducirlo la rodaja y lo metemos de nuevo a la cola*/
-		running->ticks=QUANTUM_TICKS;
-		disable_interrupt(); //Con disable_interrupt y enable_interrupt protegemos los accesos a la cola
-		if(enqueue (thread_q , running )== NULL)
+		running->ticks = QUANTUM_TICKS;
+		disable_interrupt (); //Con disable_interrupt y enable_interrupt protegemos los accesos a la cola
+		if (enqueue (thread_q , running )== NULL)
 		{
-		perror("Fallo al introducir hilo de la cola");
-		exit(-1);
+			perror ("Fallo al introducir hilo de la cola");
+			exit (-1);
 		}
-		enable_interrupt();
+		enable_interrupt ();
 	}
 	/*Sacamos el siguiente hilo de la cola*/
-	disable_interrupt();
+	disable_interrupt ();
 	TCB* next = dequeue (thread_q);
-	enable_interrupt();
+	enable_interrupt ();
 	/*Si la cola no tiene más hilos terminamos el planificador*/
-	if(next == NULL)
+	if (next == NULL)
 	{
 		printf ("*** FINISH\n");
-		exit(1);
+		exit (1);
 	}
 	return next;
 }
@@ -233,7 +233,7 @@ void activator (TCB* next)
 	running->state = INIT;
 	current = running->tid;
 	/*Si el hilo anterior ha terminado, utilizaremos setcontext para el siguiente*/
-	if(last->state == FREE)
+	if (last->state == FREE)
 	{
 		printf ("*** THREAD %d TERMINATED : SETCONTEXT OF %d\n",last->tid,running->tid);
 		setcontext (&running->run_env);
