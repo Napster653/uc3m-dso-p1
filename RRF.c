@@ -140,9 +140,23 @@ int mythread_create (void (*fun_addr)(), int priority)
 			printf ("*** THREAD %d PREEMTED : SETCONTEXT OF %d\n",last->tid,running->tid);
 			swapcontext (&last->run_env,&running->run_env);  
 		}
-		else enqueue (high_q , t ) ;
+		else
+		{
+			if(enqueue (high_q , t ) == NULL)
+			{
+				perror("Fallo al introducir hilo de la cola");
+				exit(-1);
+			}
+		}
 	}
-	if(priority == LOW_PRIORITY) enqueue (low_q , t ) ;
+	if(priority == LOW_PRIORITY)
+	{
+		if(enqueue (low_q , t ) == NULL)
+		{
+			perror("Fallo al introducir hilo de la cola");
+			exit(-1);
+		}
+	}
 	enable_interrupt();
 	return i;
 } /****** End my_thread_create() ******/
