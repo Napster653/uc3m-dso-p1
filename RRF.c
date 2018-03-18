@@ -137,7 +137,7 @@ int mythread_create (void (*fun_addr)(), int priority)
 			running = t;
 			running->state = INIT;
 			current = t->tid;
-			printf ("*** THREAD <%d PREEMTED : SETCONTEXT OF %d\n",last->tid,running->tid);
+			printf ("*** THREAD %d PREEMTED : SETCONTEXT OF %d\n",last->tid,running->tid);
 			swapcontext (&last->run_env,&running->run_env);  
 		}
 		else enqueue (high_q , t ) ;
