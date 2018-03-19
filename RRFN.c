@@ -79,7 +79,7 @@ void init_mythreadlib ()
 	/*inicializamos las colas*/
 	high_q = queue_new ();
 	low_q = queue_new ();
-  wait_q = queue_new ();
+	wait_q = queue_new ();
 	/* Initialize network and clock interrupts */
 	init_network_interrupt ();
 	init_interrupt ();
@@ -177,10 +177,8 @@ int read_network ()
 		exit(-1);
   }
   /*Si la cola de esperas es la única con algo lleno, pasaremos a ejecutar el idle thread*/
-  printf("CURRENT: %d HIGH QUEUE: %d LOW QUEUE %d\n", current,queue_empty(high_q),queue_empty(low_q));
   if(queue_empty(low_q) == 1 && queue_empty(high_q) == 1 && current != -1)
-  { 
-    printf("idle times\n");
+  {
     TCB* last = running;
     running = &idle;
     current = idle.tid;
@@ -246,7 +244,6 @@ void mythread_exit ()
 	}
   if(queue_empty(low_q) == 1 && queue_empty(high_q) == 1 && current != -1)
   { 
-    printf("idle times\n");
     TCB* last = running;
     running = &idle;
     current = idle.tid;
@@ -321,15 +318,6 @@ TCB* scheduler ()
 /* Timer interrupt */
 void timer_interrupt (int sig)
 {
-  if(queue_empty(low_q) == 1 && queue_empty(high_q) == 1 && current != -1)
-  { 
-    printf("idle times\n");
-    TCB* last = running;
-    running = &idle;
-    current = idle.tid;
-    swapcontext (&last->run_env,&running->run_env);
-    return;
-  }
   /*Si se esta ejecutando el idle thread y hay hilos listos, los ponemos a ejecutar*/
   if(current == -1 && (queue_empty(high_q) != 1 || queue_empty(low_q) != 1))
   {
