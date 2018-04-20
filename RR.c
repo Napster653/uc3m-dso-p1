@@ -241,7 +241,10 @@ void activator (TCB* next)
 	/*Si el hilo anterior no ha terminado, cambiamos el contexto mediante swapcontext*/
 	else
 	{
-		printf ("*** SWAPCONTEXT FROM %d TO %d\n",last->tid,running->tid);
-		swapcontext (&last->run_env,&running->run_env);
+		if(last->tid != running->tid)
+		{
+			printf ("*** SWAPCONTEXT FROM %d TO %d\n",last->tid,running->tid);
+			swapcontext (&last->run_env,&running->run_env);
+		}
 	}
 }
